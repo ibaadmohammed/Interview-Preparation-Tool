@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Preparation Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .app {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .control-group select,
+        .control-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .question-card {
+            background: linear-gradient(145deg, #ffffff, #f7fafc);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            border-left: 5px solid #4facfe;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .question-category,
+        .question-difficulty {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-category {
+            background: linear-gradient(145deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .question-difficulty.easy {
+            background: linear-gradient(145deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .question-difficulty.medium {
+            background: linear-gradient(145deg, #ed8936, #dd6b20);
+            color: white;
+        }
+
+        .question-difficulty.hard {
+            background: linear-gradient(145deg, #e53e3e, #c53030);
+            color: white;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #e2e8f0, #cbd5e0);
+            color: #4a5568;
+        }
+
+        .btn-success {
+            background: linear-gradient(145deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(145deg, #e53e3e, #c53030);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            transition: width 0.5s ease;
+        }
+
+        .answer-section {
+            background: linear-gradient(145deg, #f7fafc, #edf2f7);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .answer-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .answer-tips {
+            background: linear-gradient(145deg, #fff5f5, #fed7d7);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #fc8181;
+            font-style: italic;
+        }
+
+        .rating-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .rating-section span {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .btn.rate {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .mock-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .timer-section {
+            background: linear-gradient(145deg, #2d3748, #4a5568);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .time-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4facfe;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .response-area {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .response-area textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .response-area textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, #ffffff, #f7fafc);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mock-results {
+            background: linear-gradient(145deg, #f0fff4, #c6f6d5);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .results-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #38a169;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+        }
+
+        .feedback-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .recommendations {
+            background: linear-gradient(145deg, #fff5f5, #fed7d7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .interview-status {
+            background: linear-gradient(145deg, #e6fffa, #b2f5ea);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .keyboard-shortcuts {
+            background: #2d3748;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .keyboard-shortcuts h4 {
+            margin-bottom: 10px;
+        }
+
+        .shortcuts-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .shortcut {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .question-actions {
+                justify-content: center;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 AI Interview Preparation Tool</h1>
+            <p>Master your interviews with AI-powered practice and feedback</p>
+        </div>
+
+        <div class="app">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="interviewTool.showTab('practice')">
+                    📚 Practice Questions
+                </button>
+                <button class="tab-btn" onclick="interviewTool.showTab('mock')">
+                    🎭 Mock Interview
+                </button>
+                <button class="tab-btn" onclick="interviewTool.showTab('feedback')">
+                    📊 Analytics
+                </button>
+            </div>
+
+            <!-- Practice Questions Tab -->
+            <div id="practice" class="tab-content active">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="categorySelect">Question Category</label>
+                        <select id="categorySelect" onchange="interviewTool.loadQuestions()">
+                            <option value="technical">Technical</option>
+                            <option value="behavioral">Behavioral</option>
+                            <option value="situational">Situational</option>
+                            <option value="leadership">Leadership</option>
+                            <option value="system-design">System Design</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="difficultyFilter">Difficulty Level</label>
+                        <select id="difficultyFilter" onchange="interviewTool.loadQuestions()">
+                            <option value="all">All Levels</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <p id="progressText">0/0 questions</p>
+                    <p>Session Questions: <span id="sessionQuestions">0</span></p>
+                </div>
+
+                <div class="question-card">
+                    <div class="question-meta">
+                        <span id="questionCategory" class="question-category">TECHNICAL</span>
+                        <span id="questionDifficulty" class="question-difficulty easy">EASY</span>
+                    </div>
+                    <div id="questionText" class="question-text">
+                        Click "Next Question" to start practicing!
+                    </div>
+                    <div class="question-actions">
+                        <button class="btn btn-primary" onclick="interviewTool.nextQuestion()">
+                            ⏭️ Next Question
+                        </button>
+                        <button class="btn btn-success" onclick="interviewTool.showAnswer()">
+                            💡 Show Answer
+                        </button>
+                        <button id="favoriteBtn" class="btn btn-secondary" onclick="interviewTool.favoriteQuestion()">
+                            <span id="favoriteIcon">☆</span> Favorite
+                        </button>
+                    </div>
+                </div>
+
+                <div id="answerSection" class="answer-section" style="display: none;">
+                    <div id="answerText" class="answer-text"></div>
+                    <div id="answerTips" class="answer-tips"></div>
+                    
+                    <div class="rating-section">
+                        <span>Rate this question:</span>
+                        <button class="btn btn-success rate" onclick="interviewTool.rateQuestion('easy')">😊 Easy</button>
+                        <button class="btn btn-secondary rate" onclick="interviewTool.rateQuestion('medium')">😐 Medium</button>
+                        <button class="btn btn-danger rate" onclick="interviewTool.rateQuestion('hard')">😅 Hard</button>
+                    </div>
+                </div>
+
+                <div class="keyboard-shortcuts">
+                    <h4>⌨️ Keyboard Shortcuts</h4>
+                    <div class="shortcuts-list">
+                        <div class="shortcut">Space: Next Question</div>
+                        <div class="shortcut">F: Toggle Favorite</div>
+                        <div class="shortcut">Ctrl+Enter: Submit Response</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mock Interview Tab -->
+            <div id="mock" class="tab-content">
+                <div class="mock-controls">
+                    <div class="control-group">
+                        <label for="mockType">Interview Type</label>
+                        <select id="mockType">
+                            <option value="general">General Interview</option>
+                            <option value="technical">Technical Focus</option>
+                            <option value="behavioral">Behavioral Focus</option>
+                            <option value="leadership">Leadership Focus</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="mockDuration">Number of Questions</label>
+                        <select id="mockDuration">
+                            <option value="5">5 Questions (15 min)</option>
+                            <option value="10">10 Questions (30 min)</option>
+                            <option value="15">15 Questions (45 min)</option>
+                            <option value="20">20 Questions (60 min)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <button id="startMockBtn" class="btn btn-primary" onclick="interviewTool.startMockInterview()">
+                        🚀 Start Mock Interview
+                    </button>
+                    <button id="endMockBtn" class="btn btn-danger" onclick="interviewTool.endMockInterview()" style="display: none;">
+                        ⏹️ End Interview
+                    </button>
+                </div>
+
+                <div id="timerSection" class="timer-section" style="display: none;">
+                    <h3>Interview Timer</h3>
+                    <div id="timeDisplay" class="time-display">00:00</div>
+                    <p>Response Time: <span id="responseTime">0:00</span></p>
+                    <button id="pauseBtn" class="btn btn-secondary" onclick="interviewTool.pauseInterview()">
+                        ⏸️ Pause
+                    </button>
+                </div>
+
+                <div id="mockQuestion" class="question-card" style="display: none;">
+                    <div id="interviewStatus" class="interview-status">
+                        <div class="status-icon">🎯</div>
+                        <p>Get ready to start your mock interview!</p>
+                        <small>Take your time and think through each answer</small>
+                    </div>
+                    
+                    <div class="question-meta">
+                        <span id="mockQuestionCategory" class="question-category">TECHNICAL</span>
+                        <span id="mockQuestionDifficulty" class="question-difficulty easy">EASY</span>
+                        <span class="question-category" style="background: linear-gradient(145deg, #805ad5, #6b46c1);">
+                            <span id="questionCounter">1 / 5</span>
+                        </span>
+                    </div>
+                    <div id="currentMockQuestion" class="question-text">
+                        Question will appear here...
+                    </div>
+                </div>
+
+                <div id="responseArea" class="response-area" style="display: none;">
+                    <h3>Your Response</h3>
+                    <textarea id="responseText" placeholder="Type your answer here... (Tip: Use the STAR method for behavioral questions)"></textarea>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="btn btn-primary" onclick="interviewTool.submitResponse()">
+                            ✅ Submit Response
+                        </button>
+                        <button class="btn btn-secondary" onclick="interviewTool.skipQuestion()">
+                            ⏭️ Skip Question
+                        </button>
+                    </div>
+                </div>
+
+                <div id="mockResults" class="mock-results" style="display: none;">
+                    <div class="results-header">
+                        <h2>🎉 Interview Complete!</h2>
+                        <div id="overallScore" class="results-score">85%</div>
+                        <p>Overall Performance Score</p>
+                    </div>
+                    <div id="detailedResults"></div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="feedback" class="tab-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Questions</h3>
+                        <div id="totalQuestionsCount" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Mock Interviews</h3>
+                        <div id="mockInterviewsCount" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Average Score</h3>
+                        <div id="averageScore" class="stat-value">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Favorites</h3>
+                        <div id="favoritesCount" class="stat-value">0</div>
+                    </div>
+                </div>
+
+                <div id="analyticsCharts">
+                    <h3>📈 Performance Trends</h3>
+                    <p style="text-align: center; padding: 40px; color: #718096;">
+                        Complete some mock interviews to see detailed analytics and performance trends here!
+                    </p>
+                </div>
+
+                <div id="recentActivity">
+                    <h3>📅 Recent Activity</h3>
+                    <div id="activityList">
+                        <p style="text-align: center; padding: 20px; color: #718096;">
+                            No recent activity yet. Start practicing to see your history!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Complete the InterviewPrepTool class
+        class InterviewPrepTool {
+            constructor() {
+                this.currentQuestionIndex = 0;
+                this.currentCategory = 'technical';
+                this.currentDifficulty = 'all';
+                this.mockInterviewActive = false;
+                this.mockTimer = 0;
+                this.mockInterval = null;
+                this.responseTimer = 0;
+                this.responseInterval = null;
+                this.currentMockQuestionIndex = 0;
+                this.mockResponses = [];
+                this.favorites = new Set();
+                this.sessionQuestions = 0;
+                this.isPaused = false;
+                
+                // Initialize comprehensive question bank
+                this.initializeQuestionBank();
+                this.loadUserData();
+                this.loadQuestions();
+                this.updateStats();
+                this.setupEventListeners();
+            }
+
+            initializeQuestionBank() {
+                this.questionBank = {
+                    technical: [
+                        {
+                            question: "Explain the difference between var, let, and const in JavaScript.",
+                            answer: "**var**: Function-scoped, can be redeclared and updated, hoisted with undefined initialization.\n**let**: Block-scoped, cannot be redeclared in same scope, can be updated, hoisted but not initialized.\n**const**: Block-scoped, cannot be redeclared or updated, must be initialized at declaration.",
+                            tips: "Remember the temporal dead zone for let and const, and how var can cause issues with closures in loops.",
+                            difficulty: 'easy',
+                            category: 'technical'
+                        },
+                        {
+                            question: "What is the time complexity of binary search and why?",
+                            answer: "**O(log n)** - Binary search eliminates half of the remaining elements in each iteration by comparing the target with the middle element. This logarithmic reduction means we need at most log₂(n) comparisons to find an element or determine it doesn't exist.",
+                            tips: "Remember that binary search only works on sorted arrays. The 'divide and conquer' approach is key to understanding the logarithmic complexity.",
+                            difficulty: 'medium',
+                            category: 'technical'
+                        },
+                        {
+                            question: "Explain closures in JavaScript with a practical example.",
+                            answer: "A closure is a function that has access to variables in its outer (enclosing) scope even after the outer function has finished executing.\n\n```javascript\nfunction createCounter() {\n  let count = 0;\n  return function() {\n    return ++count;\n  };\n}\nconst counter = createCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2\n```",
+                            tips: "Closures enable data privacy, function factories, and are fundamental to module patterns. They're created every time a function is created.",
+                            difficulty: 'medium',
+                            category: 'technical'
+                        },
+                        {
+                            question: "What's the difference between SQL and NoSQL databases?",
+                            answer: "**SQL Databases**: Relational, structured data with fixed schema, ACID properties, vertical scaling, strong consistency. Examples: PostgreSQL, MySQL.\n**NoSQL Databases**: Non-relational, flexible schema, eventual consistency, horizontal scaling, designed for specific data models. Examples: MongoDB (document), Redis (key-value), Cassandra (column-family).",
+                            tips: "Consider the CAP theorem - you can't have all three: Consistency, Availability, and Partition tolerance simultaneously.",
+                            difficulty: 'medium',
+                            category: 'technical'
+                        },
+                        {
+                            question: "Explain the Virtual DOM in React and its benefits.",
+                            answer: "The Virtual DOM is a JavaScript representation of the actual DOM kept in memory. React uses it to:\n1. **Minimize DOM manipulations**: Compare virtual trees (diffing)\n2. **Batch updates**: Group changes together\n3. **Optimize rendering**: Update only what actually changed\n4. **Improve performance**: DOM operations are expensive, JS operations are fast",
+                            tips: "The reconciliation process is React's diffing algorithm. Understanding this helps explain why keys are important in lists.",
+                            difficulty: 'medium',
+                            category: 'technical'
+                        },
+                        {
+                            question: "How would you design a URL shortener like bit.ly?",
+                            answer: "**Components**: Web server, database, cache layer, analytics service.\n**Database**: Store original URL, short key, metadata (creation date, expiry).\n**Encoding**: Base62 encoding (0-9, a-z, A-Z) for short URLs.\n**Scaling**: Load balancers, database sharding, CDN for global distribution.\n**Features**: Custom aliases, analytics, expiration, rate limiting.",
+                            tips: "Consider trade-offs: random vs sequential key generation, SQL vs NoSQL choice, caching strategy, and how to handle expired URLs.",
+                            difficulty: 'hard',
+                            category: 'system-design'
+                        }
+                    ],
+                    behavioral: [
+                        {
+                            question: "Tell me about a time when you had to work with a difficult team member.",
+                            answer: "**Use STAR Method**:\n**Situation**: Describe the context and team dynamics\n**Task**: Your role and responsibilities\n**Action**: Specific steps you took to address the situation - active listening, finding common ground, involving management if needed\n**Result**: Positive outcome, lessons learned, improved team collaboration",
+                            tips: "Focus on your problem-solving skills, emotional intelligence, and professional communication rather than criticizing the difficult person.",
+                            difficulty: 'medium',
+                            category: 'behavioral'
+                        },
+                        {
+                            question: "Describe a challenging project you worked on and how you overcame obstacles.",
+                            answer: "**Structure your response**:\n1. **Project context**: Scope, timeline, team size\n2. **Specific challenges**: Technical, resource, or timeline constraints\n3. **Your actions**: Problem-solving approach, research, collaboration\n4. **Results**: Quantifiable outcomes, lessons learned, skills developed",
+                            tips: "Choose a project that demonstrates technical skills, leadership, and resilience. Show how you turned challenges into learning opportunities.",
+                            difficulty: 'medium',
+                            category: 'behavioral'
+                        },
+                        {
+                            question: "How do you handle criticism or feedback?",
+                            answer: "**Demonstrate growth mindset**:\n1. **Listen actively**: Don't get defensive, ask clarifying questions\n2. **Reflect objectively**: Separate emotion from facts\n3. **Take action**: Create improvement plan, seek additional feedback\n4. **Follow up**: Show progress and continued learning",
+                            tips: "Give a specific example of feedback you received, how you processed it, and what positive changes resulted from it.",
+                            difficulty: 'easy',
+                            category: 'behavioral'
+                        },
+                        {
+                            question: "Tell me about a time you failed and what you learned from it.",
+                            answer: "**Show accountability and growth**:\n1. **Own the failure**: Take responsibility without blaming others\n2. **Analyze root causes**: What went wrong and why\n3. **Lessons learned**: Specific insights gained\n4. **Applied learnings**: How you prevented similar issues\n5. **Better outcomes**: Demonstrate improved results",
+                            tips: "Choose a real failure with significant learning. Show vulnerability but focus on growth and improvement rather than dwelling on the negative.",
+                            difficulty: 'medium',
+                            category: 'behavioral'
+                        }
+                    ],
+                    situational: [
+                        {
+                            question: "How would you handle disagreeing with your manager's decision?",
+                            answer: "**Professional approach**:\n1. **Understand fully**: Ask questions to understand reasoning\n2. **Prepare your case**: Gather data and alternative solutions\n3. **Schedule discussion**: Private, respectful conversation\n4. **Present objectively**: Focus on business impact, not personal opinions\n5. **Accept decision**: Support the final choice professionally",
+                            tips: "Show that you can disagree respectfully while maintaining team harmony and trust.",
+                            difficulty: 'medium',
+                            category: 'situational'
+                        },
+                        {
+                            question: "What would you do if assigned a task with an unrealistic deadline?",
+                            answer: "**Strategic response**:\n1. **Assess scope**: Break down requirements and estimate effort\n2. **Communicate early**: Present analysis with supporting data\n3. **Propose alternatives**: Scope reduction, additional resources, phased delivery\n4. **Negotiate timeline**: Based on realistic capacity and priorities\n5. **Deliver value**: Focus on highest-impact features first",
+                            tips: "Demonstrate project management skills and ability to communicate constraints professionally without being negative.",
+                            difficulty: 'medium',
+                            category: 'situational'
+                        },
+                        {
+                            question: "How would you approach learning a new technology for a project?",
+                            answer: "**Learning strategy**:\n1. **Assess requirements**: Understand what depth of knowledge is needed\n2. **Create learning plan**: Official docs, tutorials, hands-on practice\n3. **Build progressively**: Start with basics, build small projects\n4. **Seek guidance**: Find mentors, join communities, ask questions\n5. **Apply practically**: Implement in project context with proper testing",
+                            tips: "Show enthusiasm for learning and a systematic approach. Mention how you balance speed with thoroughness.",
+                            difficulty: 'easy',
+                            category: 'situational'
+                        }
+                    ],
+                    leadership: [
+                        {
+                            question: "Describe your leadership style and give an example.",
+                            answer: "**Adaptive leadership approach**:\n**Style**: Situational leadership - adapt based on team needs and context\n**Example**: Led a project where I used:\n- **Directive**: For new team members needing guidance\n- **Coaching**: For developers growing their skills\n- **Supporting**: For experienced team members who needed autonomy\n**Results**: Improved team performance and individual growth",
+                            tips: "Show that you can adapt your leadership style based on the situation and team needs rather than using a one-size-fits-all approach.",
+                            difficulty: 'hard',
+                            category: 'leadership'
+                        },
+                        {
+                            question: "How do you motivate team members who are struggling?",
+                            answer: "**Supportive approach**:\n1. **Identify root causes**: One-on-one conversations to understand challenges\n2. **Provide resources**: Training, mentoring, tools, or time\n3. **Set achievable goals**: Break large tasks into manageable pieces\n4. **Regular check-ins**: Offer ongoing support and guidance\n5. **Recognize progress**: Celebrate improvements and milestones",
+                            tips: "Show empathy and problem-solving skills. Focus on enabling success rather than just pushing harder.",
+                            difficulty: 'medium',
+                            category: 'leadership'
+                        },
+                        {
+                            question: "Tell me about a difficult decision that affected your team.",
+                            answer: "**Decision-making process**:\n1. **Context**: Describe the situation and stakes\n2. **Analysis**: How you gathered information and weighed options\n3. **Stakeholder input**: Who you consulted and why\n4. **Communication**: How you explained the decision and rationale\n5. **Follow-through**: How you supported the team through the change\n6. **Outcome**: Results and lessons learned",
+                            tips: "Choose a decision that shows strategic thinking, empathy, and strong communication skills. Show how you balanced different interests.",
+                            difficulty: 'hard',
+                            category: 'leadership'
+                        }
+                    ],
+                    'system-design': [
+                        {
+                            question: "Design a chat application like WhatsApp.",
+                            answer: "**Architecture**:\n**Components**: User service, chat service, notification service, media service\n**Database**: Users (SQL), Messages (NoSQL), Media metadata\n**Real-time**: WebSockets or Server-Sent Events\n**Scaling**: Microservices, load balancers, message queues\n**Features**: End-to-end encryption, message delivery status, group chats",
+                            tips: "Start with functional requirements, then discuss scale, then dive into technical architecture. Consider consistency vs availability trade-offs.",
+                            difficulty: 'hard',
+                            category: 'system-design'
+                        },
+                        {
+                            question: "How would you design a notification system?",
+                            answer: "**System components**:\n**API Gateway**: Rate limiting, authentication\n**Notification Service**: Template management, delivery logic\n**Queue System**: Message queues for async processing\n**Channels**: Email, SMS, push notifications, webhooks\n**Database**: User preferences, notification history\n**Analytics**: Delivery rates, user engagement",
+                            tips: "Discuss reliability, scalability, and user experience. Consider notification fatigue and delivery guarantees.",
+                            difficulty: 'hard',
+                            category: 'system-design'
+                        }
+                    ]
+                };
+
+                // Flatten all questions for mock interviews
+                this.allQuestions = [];
+                Object.entries(this.questionBank).forEach(([category, questions]) => {
+                    questions.forEach(q => {
+                        this.allQuestions.push({...q, category});
+                    });
+                });
+            }
+
+            loadUserData() {
+                // In a real application, this would connect to a database
+                // For now, we'll simulate with localStorage
+                this.favorites = new Set();
+                this.sessionQuestions = 0;
+            }
+
+            saveUserData() {
+                // In a real application, this would save to a database
+                // For now, we'll simulate the action
+                console.log('User data saved');
+            }
+
+            setupEventListeners() {
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+                    
+                    switch(e.code) {
+                        case 'Space':
+                            if (document.getElementById('practice').classList.contains('active')) {
+                                e.preventDefault();
+                                this.nextQuestion();
+                            }
+                            break;
+                        case 'KeyF':
+                            e.preventDefault();
+                            this.favoriteQuestion();
+                            break;
+                    }
+                });
+
+                // Auto-save response text
+                const responseText = document.getElementById('responseText');
+                if (responseText) {
+                    responseText.addEventListener('keydown', (e) => {
+                        if (e.ctrlKey && e.code === 'Enter') {
+                            e.preventDefault();
+                            this.submitResponse();
+                        }
+                    });
+                }
+            }
+
+            showTab(tabName) {
+                // Hide all tabs and buttons
+                document.querySelectorAll('.tab-content').forEach(tab => 
+                    tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(btn => 
+                    btn.classList.remove('active'));
+
+                // Show selected tab
+                document.getElementById(tabName).classList.add('active');
+                event.target.classList.add('active');
+
+                // Update content based on tab
+                if (tabName === 'feedback') {
+                    this.updateAnalytics();
+                }
+            }
+
+            loadQuestions() {
+                this.currentCategory = document.getElementById('categorySelect').value;
+                this.currentDifficulty = document.getElementById('difficultyFilter').value;
+                this.currentQuestionIndex = 0;
+                this.updateProgress();
+            }
+
+            getFilteredQuestions() {
+                let questions = this.questionBank[this.currentCategory] || [];
+                
+                if (this.currentDifficulty !== 'all') {
+                    questions = questions.filter(q => q.difficulty === this.currentDifficulty);
+                }
+                
+                return questions;
+            }
+
+            nextQuestion() {
+                const questions = this.getFilteredQuestions();
+                if (!questions.length) return;
+
+                const question = questions[this.currentQuestionIndex];
+                
+                // Update UI
+                document.getElementById('questionText').textContent = question.question;
+                document.getElementById('questionCategory').textContent = question.category.toUpperCase();
+                document.getElementById('questionDifficulty').textContent = question.difficulty.toUpperCase();
+                document.getElementById('questionDifficulty').className = `question-difficulty ${question.difficulty}`;
+                
+                // Hide answer section
+                document.getElementById('answerSection').style.display = 'none';
+                
+                // Update favorite button
+                const questionKey = `${question.category}-${this.currentQuestionIndex}`;
+                const favoriteBtn = document.getElementById('favoriteBtn');
+                const favoriteIcon = document.getElementById('favoriteIcon');
+                
+                if (this.favorites.has(questionKey)) {
+                    favoriteIcon.textContent = '⭐';
+                    favoriteBtn.style.background = 'linear-gradient(145deg, #f6ad55, #ed8936)';
+                } else {
+                    favoriteIcon.textContent = '☆';
+                    favoriteBtn.style.background = 'linear-gradient(145deg, #e2e8f0, #cbd5e0)';
+                }
+
+                // Move to next question
+                this.currentQuestionIndex = (this.currentQuestionIndex + 1) % questions.length;
+                this.sessionQuestions++;
+                
+                this.updateProgress();
+                this.incrementStat('totalQuestions');
+                this.saveUserData();
+            }
+
+            showAnswer() {
+                const questions = this.getFilteredQuestions();
+                if (!questions.length) return;
+
+                const prevIndex = this.currentQuestionIndex === 0 ? 
+                    questions.length - 1 : this.currentQuestionIndex - 1;
+                const question = questions[prevIndex];
+                
+                document.getElementById('answerText').innerHTML = this.formatAnswer(question.answer);
+                document.getElementById('answerTips').innerHTML = `<strong>💡 Pro Tip:</strong> ${question.tips}`;
+                document.getElementById('answerSection').style.display = 'block';
+                
+                // Scroll to answer
+                document.getElementById('answerSection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'nearest' 
+                });
+            }
+
+            formatAnswer(answer) {
+                // Convert markdown-style formatting to HTML
+                return answer
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>')
+                    .replace(/^/, '<p>')
+                    .replace(/$/, '</p>')
+                    .replace(/```javascript([\s\S]*?)```/g, '<pre><code class="language-javascript">$1</code></pre>');
+            }
+
+            favoriteQuestion() {
+                const questions = this.getFilteredQuestions();
+                if (!questions.length) return;
+
+                const prevIndex = this.currentQuestionIndex === 0 ? 
+                    questions.length - 1 : this.currentQuestionIndex - 1;
+                const questionKey = `${this.currentCategory}-${prevIndex}`;
+                
+                const favoriteBtn = document.getElementById('favoriteBtn');
+                const favoriteIcon = document.getElementById('favoriteIcon');
+                
+                if (this.favorites.has(questionKey)) {
+                    this.favorites.delete(questionKey);
+                    favoriteIcon.textContent = '☆';
+                    favoriteBtn.style.background = 'linear-gradient(145deg, #e2e8f0, #cbd5e0)';
+                } else {
+                    this.favorites.add(questionKey);
+                    favoriteIcon.textContent = '⭐';
+                    favoriteBtn.style.background = 'linear-gradient(145deg, #f6ad55, #ed8936)';
+                }
+                
+                this.saveUserData();
+                this.updateStats();
+            }
+
+            rateQuestion(difficulty) {
+                const rateButtons = document.querySelectorAll('.btn.rate');
+                rateButtons.forEach(btn => btn.style.opacity = '0.6');
+                event.target.style.opacity = '1';
+                
+                setTimeout(() => {
+                    rateButtons.forEach(btn => btn.style.opacity = '1');
+                }, 1000);
+            }
+
+            updateProgress() {
+                const questions = this.getFilteredQuestions();
+                if (questions.length) {
+                    const progress = (this.currentQuestionIndex / questions.length) * 100;
+                    document.getElementById('progressFill').style.width = `${progress}%`;
+                    document.getElementById('progressText').textContent = 
+                        `${this.currentQuestionIndex}/${questions.length} questions`;
+                }
+                
+                document.getElementById('sessionQuestions').textContent = this.sessionQuestions;
+            }
+
+            // Mock Interview Methods
+            startMockInterview() {
+                this.mockInterviewActive = true;
+                this.currentMockQuestionIndex = 0;
+                this.mockTimer = 0;
+                this.responseTimer = 0;
+                this.mockResponses = [];
+                this.isPaused = false;
+
+                const mockType = document.getElementById('mockType').value;
+                const duration = parseInt(document.getElementById('mockDuration').value);
+                
+                // Get questions based on type
+                this.mockQuestions = this.generateMockQuestions(mockType, duration);
+                
+                // Update UI
+                this.toggleMockInterviewUI(true);
+                this.showNextMockQuestion();
+                this.startTimer();
+                this.startResponseTimer();
+            }
+
+            generateMockQuestions(type, count) {
+                let questionPool = [];
+                
+                switch(type) {
+                    case 'technical':
+                        questionPool = [...this.questionBank.technical, ...this.questionBank['system-design']];
+                        break;
+                    case 'behavioral':
+                        questionPool = this.questionBank.behavioral;
+                        break;
+                    case 'leadership':
+                        questionPool = this.questionBank.leadership;
+                        break;
+                    default: // general
+                        questionPool = this.allQuestions;
+                }
+                
+                // Shuffle and select questions
+                const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, count).map((q, index) => ({
+                    ...q,
+                    questionNumber: index + 1,
+                    totalQuestions: count
+                }));
+            }
+
+            toggleMockInterviewUI(isActive) {
+                document.getElementById('startMockBtn').style.display = isActive ? 'none' : 'inline-block';
+                document.getElementById('endMockBtn').style.display = isActive ? 'inline-block' : 'none';
+                document.getElementById('timerSection').style.display = isActive ? 'block' : 'none';
+                document.getElementById('mockQuestion').style.display = isActive ? 'block' : 'none';
+                document.getElementById('responseArea').style.display = isActive ? 'block' : 'none';
+                document.getElementById('mockResults').style.display = 'none';
+            }
+
+            startTimer() {
+                this.mockInterval = setInterval(() => {
+                    if (!this.isPaused) {
+                        this.mockTimer++;
+                        this.updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+
+            startResponseTimer() {
+                this.responseInterval = setInterval(() => {
+                    if (!this.isPaused) {
+                        this.responseTimer++;
+                        this.updateResponseTimerDisplay();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.mockTimer / 60);
+                const seconds = this.mockTimer % 60;
+                document.getElementById('timeDisplay').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            updateResponseTimerDisplay() {
+                const minutes = Math.floor(this.responseTimer / 60);
+                const seconds = this.responseTimer % 60;
+                document.getElementById('responseTime').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            showNextMockQuestion() {
+                if (this.currentMockQuestionIndex < this.mockQuestions.length) {
+                    const question = this.mockQuestions[this.currentMockQuestionIndex];
+                    
+                    document.getElementById('currentMockQuestion').textContent = question.question;
+                    document.getElementById('mockQuestionCategory').textContent = question.category.toUpperCase();
+                    document.getElementById('mockQuestionDifficulty').textContent = question.difficulty.toUpperCase();
+                    document.getElementById('mockQuestionDifficulty').className = `question-difficulty ${question.difficulty}`;
+                    
+                    document.getElementById('questionCounter').textContent = 
+                        `${this.currentMockQuestionIndex + 1} / ${this.mockQuestions.length}`;
+                    
+                    document.getElementById('interviewStatus').innerHTML = `
+                        <div class="status-icon">🎯</div>
+                        <p>Question ${this.currentMockQuestionIndex + 1} of ${this.mockQuestions.length}</p>
+                        <small>Take your time and think through your answer</small>
+                    `;
+                    
+                    // Clear previous response
+                    document.getElementById('responseText').value = '';
+                    this.responseTimer = 0;
+                    this.updateResponseTimerDisplay();
+                    
+                } else {
+                    this.endMockInterview();
+                }
+            }
+
+            submitResponse() {
+                const response = document.getElementById('responseText').value.trim();
+                if (!response) {
+                    alert('Please provide a response before submitting.');
+                    return;
+                }
+
+                const question = this.mockQuestions[this.currentMockQuestionIndex];
+                const responseData = {
+                    question: question.question,
+                    category: question.category,
+                    difficulty: question.difficulty,
+                    response: response,
+                    responseTime: this.responseTimer,
+                    timestamp: new Date().toISOString()
+                };
+
+                this.mockResponses.push(responseData);
+                this.currentMockQuestionIndex++;
+                this.responseTimer = 0;
+                
+                this.showNextMockQuestion();
+            }
+
+            skipQuestion() {
+                const question = this.mockQuestions[this.currentMockQuestionIndex];
+                this.mockResponses.push({
+                    question: question.question,
+                    category: question.category,
+                    difficulty: question.difficulty,
+                    response: '[SKIPPED]',
+                    responseTime: this.responseTimer,
+                    timestamp: new Date().toISOString()
+                });
+                
+                this.currentMockQuestionIndex++;
+                this.responseTimer = 0;
+                this.showNextMockQuestion();
+            }
+
+            pauseInterview() {
+                this.isPaused = !this.isPaused;
+                const pauseBtn = document.getElementById('pauseBtn');
+                
+                if (this.isPaused) {
+                    pauseBtn.textContent = '▶️ Resume';
+                    pauseBtn.classList.add('resumed');
+                } else {
+                    pauseBtn.textContent = '⏸️ Pause';
+                    pauseBtn.classList.remove('resumed');
+                }
+            }
+
+            endMockInterview() {
+                this.mockInterviewActive = false;
+                clearInterval(this.mockInterval);
+                clearInterval(this.responseInterval);
+
+                // Calculate results
+                const results = this.calculateMockResults();
+                
+                // Update UI
+                this.displayMockResults(results);
+                this.incrementStat('mockInterviews');
+            }
+
+            calculateMockResults() {
+                const completedResponses = this.mockResponses.filter(r => r.response !== '[SKIPPED]');
+                const totalQuestions = this.mockResponses.length;
+                const completionRate = (completedResponses.length / totalQuestions) * 100;
+                
+                // AI-powered scoring algorithm
+                let totalScore = 0;
+                const categoryScores = {};
+                
+                completedResponses.forEach(response => {
+                    const score = this.analyzeResponse(response);
+                    totalScore += score;
+                    
+                    if (!categoryScores[response.category]) {
+                        categoryScores[response.category] = [];
+                    }
+                    categoryScores[response.category].push(score);
+                });
+                
+                const averageScore = completedResponses.length > 0 ? totalScore / completedResponses.length : 0;
+                
+                // Generate feedback and recommendations
+                const feedback = this.generateAIFeedback(this.mockResponses, averageScore);
+                const recommendations = this.generateRecommendations(categoryScores, completionRate);
+                
+                return {
+                    totalQuestions,
+                    completedQuestions: completedResponses.length,
+                    completionRate: Math.round(completionRate),
+                    averageScore: Math.round(averageScore),
+                    totalTime: this.mockTimer,
+                    categoryScores,
+                    feedback,
+                    recommendations,
+                    responses: this.mockResponses
+                };
+            }
+
+            analyzeResponse(response) {
+                if (response.response === '[SKIPPED]') return 0;
+                
+                let score = 50; // Base score
+                const text = response.response.toLowerCase();
+                const wordCount = response.response.split(' ').length;
+                const responseTime = response.responseTime;
+                
+                // Length scoring
+                if (wordCount >= 50 && wordCount <= 200) score += 20;
+                else if (wordCount >= 30) score += 10;
+                else if (wordCount < 20) score -= 20;
+                
+                // Time scoring (optimal range: 60-180 seconds)
+                if (responseTime >= 60 && responseTime <= 180) score += 15;
+                else if (responseTime < 30) score -= 10;
+                else if (responseTime > 300) score -= 5;
+                
+                // Category-specific analysis
+                switch(response.category) {
+                    case 'behavioral':
+                        if (text.includes('situation') || text.includes('task') || 
+                            text.includes('action') || text.includes('result')) score += 20;
+                        if (text.includes('learned') || text.includes('improved')) score += 10;
+                        break;
+                        
+                    case 'technical':
+                        if (text.includes('because') || text.includes('therefore') || 
+                            text.includes('example') || text.includes('specifically')) score += 15;
+                        if (text.includes('trade-off') || text.includes('consider')) score += 10;
+                        break;
+                        
+                    case 'leadership':
+                        if (text.includes('team') || text.includes('collaborate') || 
+                            text.includes('communicate')) score += 15;
+                        if (text.includes('decision') || text.includes('priority')) score += 10;
+                        break;
+                }
+                
+                // Structure indicators
+                if (text.includes('first') || text.includes('second') || 
+                    text.includes('finally') || text.includes('conclusion')) score += 10;
+                
+                return Math.min(100, Math.max(0, score));
+            }
+
+            generateAIFeedback(responses, averageScore) {
+                const completedCount = responses.filter(r => r.response !== '[SKIPPED]').length;
+                const totalCount = responses.length;
+                
+                let feedback = [];
+                
+                // Overall performance feedback
+                if (averageScore >= 80) {
+                    feedback.push("🌟 Excellent performance! Your responses show strong preparation and clear thinking.");
+                } else if (averageScore >= 60) {
+                    feedback.push("👍 Good job! You demonstrate solid understanding with room for improvement.");
+                } else {
+                    feedback.push("💪 Keep practicing! Focus on structure and providing more detailed examples.");
+                }
+                
+                // Completion rate feedback
+                if (completedCount === totalCount) {
+                    feedback.push("✅ Great commitment - you answered all questions!");
+                } else {
+                    feedback.push(`📝 You completed ${completedCount}/${totalCount} questions. Try to answer all questions in future interviews.`);
+                }
+                
+                // Response time feedback
+                const avgResponseTime = responses.reduce((sum, r) => sum + r.responseTime, 0) / responses.length;
+                if (avgResponseTime < 60) {
+                    feedback.push("⚡ You're responding quickly - make sure you're taking time to think through your answers thoroughly.");
+                } else if (avgResponseTime > 180) {
+                    feedback.push("🤔 Take a bit more time to organize your thoughts, but try to be more concise in your delivery.");
+                } else {
+                    feedback.push("⏱️ Good pacing on your responses - you're taking appropriate time to think and answer.");
+                }
+                
+                return feedback;
+            }
+
+            generateRecommendations(categoryScores, completionRate) {
+                let recommendations = [];
+                
+                // Category-specific recommendations
+                Object.entries(categoryScores).forEach(([category, scores]) => {
+                    const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    
+                    if (avgScore < 60) {
+                        switch(category) {
+                            case 'behavioral':
+                                recommendations.push("📚 Practice the STAR method (Situation, Task, Action, Result) for behavioral questions.");
+                                break;
+                            case 'technical':
+                                recommendations.push("🔧 Review fundamental concepts and practice explaining technical topics clearly.");
+                                break;
+                            case 'leadership':
+                                recommendations.push("👥 Prepare examples that demonstrate your leadership experience and decision-making skills.");
+                                break;
+                            case 'system-design':
+                                recommendations.push("🏗️ Study system design patterns and practice breaking down complex systems.");
+                                break;
+                        }
+                    }
+                });
+                
+                // General recommendations
+                if (completionRate < 80) {
+                    recommendations.push("🎯 Work on completing all questions - practice time management during interviews.");
+                }
+                
+                recommendations.push("📖 Continue practicing with different question types to build confidence.");
+                recommendations.push("🗣️ Practice speaking your answers out loud to improve fluency.");
+                
+                return recommendations;
+            }
+
+            displayMockResults(results) {
+                // Hide interview UI, show results
+                this.toggleMockInterviewUI(false);
+                document.getElementById('mockResults').style.display = 'block';
+                
+                // Update overall score
+                document.getElementById('overallScore').textContent = `${results.averageScore}%`;
+                
+                // Create detailed results HTML
+                const detailedHTML = `
+                    <div class="results-summary">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h4>Questions Completed</h4>
+                                <div class="stat-value">${results.completedQuestions}/${results.totalQuestions}</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Completion Rate</h4>
+                                <div class="stat-value">${results.completionRate}%</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Total Time</h4>
+                                <div class="stat-value">${Math.floor(results.totalTime / 60)}:${(results.totalTime % 60).toString().padStart(2, '0')}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-section">
+                        <h3>🤖 AI Feedback</h3>
+                        ${results.feedback.map(item => `<div class="feedback-item">${item}</div>`).join('')}
+                    </div>
+                    
+                    <div class="recommendations">
+                        <h3>📋 Recommendations</h3>
+                        ${results.recommendations.map(item => `<div class="feedback-item">${item}</div>`).join('')}
+                    </div>
+                `;
+                
+                document.getElementById('detailedResults').innerHTML = detailedHTML;
+            }
+
+            // Analytics and Statistics
+            incrementStat(statName) {
+                // In a real app, this would update a database
+                console.log(`Incremented ${statName}`);
+                this.updateStats();
+            }
+
+            updateStats() {
+                // Update analytics display
+                document.getElementById('totalQuestionsCount').textContent = this.sessionQuestions;
+                document.getElementById('favoritesCount').textContent = this.favorites.size;
+                
+                // In a real app, these would come from stored data
+                document.getElementById('mockInterviewsCount').textContent = '0';
+                document.getElementById('averageScore').textContent = '0%';
+            }
+
+            updateAnalytics() {
+                // This would display charts and detailed analytics in a real app
+                console.log('Analytics updated');
+            }
+        }
+
+        // Initialize the application
+        const interviewTool = new InterviewPrepTool();
+    </script>
+</body>
+</html>
